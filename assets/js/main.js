@@ -7,10 +7,23 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-//var overlap = !(rect1.right < rect2.left ||
-//                rect1.left > rect2.right ||
-//                rect1.bottom < rect2.top ||
-//                rect1.top > rect2.bottom)
+async function removeWalls() {
+  let wallsTop = document.getElementsByClassName('wall-top')
+  let wallsBottom = document.getElementsByClassName('wall-bottom')
+
+  Array.prototype.forEach.call(wallsTop, function(el) {
+    if (parseInt(el.style.left) <= 20) {
+      console.log("REMOVE ME")
+      el.remove()
+    }
+  })
+  Array.prototype.forEach.call(wallsBottom, function(el) {
+    if (parseInt(el.style.left) <= 20) {
+      console.log("REMOVE ME")
+      el.remove()
+    }
+  })
+}
 
 async function overLap() {
   let wallsTop = document.getElementsByClassName('wall-top')
@@ -37,16 +50,14 @@ async function overLap() {
 async function moveWallLeft(wall) {
   for (var i=0;i<1;i += 2) {
     wall.style.left = parseInt(wall.style.left) - 2 + 'px'
-    console.log("New Top: " + wall.style.left)
     await sleep(1)
   }
 }
 
 async function setupTopWalls() {
-  var walls = document.getElementsByClassName('wall-top')
+  let walls = document.getElementsByClassName('wall-top')
   if (walls.length < 1) {
-    console.log(walls)
-    var wall = document.createElement('div')
+    let wall = document.createElement('div')
     wall.style.height = Math.floor((Math.random() * 150) + 100) + "px"
     wall.style.width = "25px"
     wall.style.backgroundColor = "#000"
@@ -54,16 +65,14 @@ async function setupTopWalls() {
     wall.style.position = "absolute"
     wall.setAttribute("class", "wall-top")
     game.appendChild(wall)
-    var walls = document.getElementsByClassName('wall-top')
-    console.log(walls)
+    walls = document.getElementsByClassName('wall-top')
   }
 }
 
 async function setupBottomWalls() {
-  var walls = document.getElementsByClassName('wall-bottom')
+  let walls = document.getElementsByClassName('wall-bottom')
   if (walls.length < 1) {
-    console.log(walls)
-    var wall = document.createElement('div')
+    let wall = document.createElement('div')
     wall.style.height = Math.floor((Math.random() * 150) + 100) + "px"
     wall.style.width = "25px"
     wall.style.backgroundColor = "#000"
@@ -72,13 +81,9 @@ async function setupBottomWalls() {
     wall.style.position = "absolute"
     wall.setAttribute("class", "wall-bottom")
     game.appendChild(wall)
-    var walls = document.getElementsByClassName('wall-bottom')
-    console.log(walls)
+    walls = document.getElementsByClassName('wall-bottom')
   }
 }
-
-setupTopWalls()
-setupBottomWalls()
 
 async function hitGround() {
   if (parseInt(bird.style.top) >= 450) {
@@ -98,7 +103,6 @@ async function fall() {
   if (!jumping) {
     for (var i=0;i<1;i += 2) {
       bird.style.top = parseInt(bird.style.top) + 2 + 'px'
-      console.log("New Top: " + bird.style.top)
       await sleep(1)
     }
   }
@@ -109,7 +113,6 @@ async function jump() {
   for (var i=0;i<75;i += 2) {
     jumping = true
     bird.style.top = parseInt(bird.style.top) - 2 + 'px'
-    console.log("New Top: " + bird.style.top)
     await sleep(2)
   }
   jumping = false
@@ -125,23 +128,30 @@ setInterval(function () {
   if (dead) {
     return console.log("Game over")
   }
+  let wallsTop = document.getElementsByClassName('wall-top')
+  let wallsBottom = document.getElementsByClassName('wall-bottom')
 
+  //Game bounding
+  hitRoof()
   hitGround().then(x => {
     if (x) {
       dead = true
     }
   })
 
-  hitRoof()
+  //Walls
+  setupTopWalls()
+  setupBottomWalls()
+  removeWalls()
+
   fall()
+
   overLap()
-  let wallsTop = document.getElementsByClassName('wall-top')
-  let wallsBottom = document.getElementsByClassName('wall-bottom')
+
   Array.prototype.forEach.call(wallsTop, function(el) {
     moveWallLeft(el)
   })
   Array.prototype.forEach.call(wallsBottom, function(el) {
     moveWallLeft(el)
   })
-
 }, 10);
