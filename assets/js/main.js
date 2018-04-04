@@ -7,6 +7,41 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+//var overlap = !(rect1.right < rect2.left ||
+//                rect1.left > rect2.right ||
+//                rect1.bottom < rect2.top ||
+//                rect1.top > rect2.bottom)
+
+async function overLap() {
+  let wallsTop = document.getElementsByClassName('wall-top')
+  let wallsBottom = document.getElementsByClassName('wall-bottom')
+
+  Array.prototype.forEach.call(wallsTop, function(el) {
+    let elBox = el.getBoundingClientRect()
+    let birdBox = bird.getBoundingClientRect()
+    let overlap = !(birdBox.right < elBox.left || birdBox.left > elBox.right || birdBox.bottom < elBox.top || birdBox.top > elBox.bottom)
+    if (overlap) {
+      dead = true
+    }
+  })
+  Array.prototype.forEach.call(wallsBottom, function(el) {
+    let elBox = el.getBoundingClientRect()
+    let birdBox = bird.getBoundingClientRect()
+    let overlap = !(birdBox.right < elBox.left || birdBox.left > elBox.right || birdBox.bottom < elBox.top || birdBox.top > elBox.bottom)
+    if (overlap) {
+      dead = true
+    }
+  })
+}
+
+async function moveWallLeft(wall) {
+  for (var i=0;i<1;i += 2) {
+    wall.style.left = parseInt(wall.style.left) - 2 + 'px'
+    console.log("New Top: " + wall.style.left)
+    await sleep(1)
+  }
+}
+
 async function setupTopWalls() {
   var walls = document.getElementsByClassName('wall-top')
   if (walls.length < 1) {
@@ -99,5 +134,14 @@ setInterval(function () {
 
   hitRoof()
   fall()
+  overLap()
+  let wallsTop = document.getElementsByClassName('wall-top')
+  let wallsBottom = document.getElementsByClassName('wall-bottom')
+  Array.prototype.forEach.call(wallsTop, function(el) {
+    moveWallLeft(el)
+  })
+  Array.prototype.forEach.call(wallsBottom, function(el) {
+    moveWallLeft(el)
+  })
 
 }, 10);
