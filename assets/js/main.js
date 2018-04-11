@@ -34,6 +34,7 @@ var gameArea = {
 
 //Function to create a game element
 function component(name,width, height, color, x, y, borderRadius) {
+  this.alive = true
   //Set component name
   this.name = name
   //Set component width
@@ -70,6 +71,9 @@ function component(name,width, height, color, x, y, borderRadius) {
   }
   //Function to make component jump
   this.jump = async function() {
+    if (!this.alive) {
+      return false
+    }
     //Set jumping state to true
     this.jumping = true
     //We want to move 30 * 2 spaces up
@@ -84,6 +88,9 @@ function component(name,width, height, color, x, y, borderRadius) {
   }
   //Falling state of the component
   this.fall = async function() {
+    if (!this.alive) {
+      return false
+    }
     //Check if jumping, if not continue
     if (!this.jumping) {
       //We want to fall 5 spaces, because its always falling unless its jumping smaller is smoother
@@ -118,20 +125,18 @@ function component(name,width, height, color, x, y, borderRadius) {
 //Update our game area
 function updateGameArea() {
   //Check if game over, early exit
-  if (gameArea.over) {
+  if (!playerOne.alive) {
     return console.log("GAMEOVER")
   }
   //Perform overlap check, early exit
-  if (playerOne.overLap(wallA) || playerOne.overLap(wallB) || playerTwo.overLap(wallA) || playerTwo.overLap(wallB)) {
-    gameArea.over = true
+  if (playerOne.alive && (playerOne.overLap(wallA) || playerOne.overLap(wallB))) {
+    playerOne.alive = false
     return
   }
   //Clear game area on frame update
   gameArea.clear()
   //Let player one fall
   playerOne.fall()
-  //Let player two fall
-  playerTwo.fall()
   //Check if the walls are
   if (wallA.x <= 0 && wallB.x <= 0) {
     //Random height for wall a
@@ -157,8 +162,6 @@ function updateGameArea() {
   wallB.update()
   //Update component position
   playerOne.update()
-  //Update component position
-  playerTwo.update()
 }
 
 //Start the game function
@@ -167,8 +170,6 @@ function startGame() {
   gameArea.start()
   //Setup player 1
   playerOne = new component("player-one",50, 50, "white", 230, 230)
-  //Setup player 2
-  playerTwo = new component("player-two",50, 50, "blue", 230, 230)
   //Setup wall a
   wallA = new component("wallA",20, 100, "red", 500, 0)
   //Setup wall b
@@ -176,14 +177,13 @@ function startGame() {
 }
 
 //Register player 1 and player 2 jumpings
-document.body.onkeyup = function(e) {
-  if (e.keyCode == 32) {
-    playerOne.jump()
-  }
-  if (e.keyCode == 38) {
-    playerTwo.jump()
-  }
-}
+document.addEventListener('click', function() {
+  playerOne.jump()
+})
+
+document.addEventListener('touchend', function() {
+  playerOne.jump()
+})
 
 //Start the game
 startGame()
