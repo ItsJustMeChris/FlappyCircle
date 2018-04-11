@@ -1,157 +1,189 @@
-var game = document.getElementById('game')
-var bird = document.getElementById('bird')
-var dead = false
-var jumping = true
-
+//Async function to sleep for x ms
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  //Return a timeout function for x ms
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-async function removeWalls() {
-  let wallsTop = document.getElementsByClassName('wall-top')
-  let wallsBottom = document.getElementsByClassName('wall-bottom')
-
-  Array.prototype.forEach.call(wallsTop, function(el) {
-    if (parseInt(el.style.left) <= 20) {
-      console.log("REMOVE ME")
-      el.remove()
-    }
-  })
-  Array.prototype.forEach.call(wallsBottom, function(el) {
-    if (parseInt(el.style.left) <= 20) {
-      console.log("REMOVE ME")
-      el.remove()
-    }
-  })
-}
-
-async function overLap() {
-  let wallsTop = document.getElementsByClassName('wall-top')
-  let wallsBottom = document.getElementsByClassName('wall-bottom')
-
-  Array.prototype.forEach.call(wallsTop, function(el) {
-    let elBox = el.getBoundingClientRect()
-    let birdBox = bird.getBoundingClientRect()
-    let overlap = !(birdBox.right < elBox.left || birdBox.left > elBox.right || birdBox.bottom < elBox.top || birdBox.top > elBox.bottom)
-    if (overlap) {
-      dead = true
-    }
-  })
-  Array.prototype.forEach.call(wallsBottom, function(el) {
-    let elBox = el.getBoundingClientRect()
-    let birdBox = bird.getBoundingClientRect()
-    let overlap = !(birdBox.right < elBox.left || birdBox.left > elBox.right || birdBox.bottom < elBox.top || birdBox.top > elBox.bottom)
-    if (overlap) {
-      dead = true
-    }
-  })
-}
-
-async function moveWallLeft(wall) {
-  for (var i=0;i<1;i += 2) {
-    wall.style.left = parseInt(wall.style.left) - 2 + 'px'
-    await sleep(1)
+//Create our game area
+var gameArea = {
+  //Create the canvas for the game
+  canvas: document.createElement("canvas"),
+  //Current game state
+  over: false,
+  //Function to start the game
+  start: function() {
+    //The canvas width
+    this.canvas.width = 500
+    //The canvas height
+    this.canvas.height = 500
+    //Make the background grey
+    this.canvas.style.background = "#333"
+    //Get the canvas context (data)
+    this.context = this.canvas.getContext("2d")
+    //Add this canvas to the HTML Dom
+    document.body.insertBefore(this.canvas, document.body.childNodes[0])
+    //Our game update rate
+    this.interval = setInterval(updateGameArea, 20)
+  },
+  //Clear the canvas
+  clear: function() {
+    //Set the context to nothing
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
   }
 }
 
-async function setupTopWalls() {
-  let walls = document.getElementsByClassName('wall-top')
-  if (walls.length < 1) {
-    let wall = document.createElement('div')
-    wall.style.height = Math.floor((Math.random() * 150) + 100) + "px"
-    wall.style.width = "25px"
-    wall.style.backgroundColor = "#000"
-    wall.style.left = "480px"
-    wall.style.position = "absolute"
-    wall.setAttribute("class", "wall-top")
-    game.appendChild(wall)
-    walls = document.getElementsByClassName('wall-top')
+//Function to create a game element
+function component(name,width, height, color, x, y, borderRadius) {
+  //Set component name
+  this.name = name
+  //Set component width
+  this.width = width
+  //Set component height
+  this.height = height
+  //Set component x coord
+  this.x = x
+  //Set component y coord
+  this.y = y
+  //Our game area context
+  ctx = gameArea.context
+  //Fill the context with color
+  ctx.fillStyle = color
+  //Do the filling at X,Y of XWidth of XHeight
+  ctx.fillRect(this.x, this.y, this.width, this.height)
+  //Set jumping state to false
+  this.jumping = false
+  //component update function
+  this.update = function() {
+    //Get our context
+    ctx = gameArea.context
+    //Set fill style to color
+    ctx.fillStyle = color
+    //Do the filling at X,Y of XWidth of XHeight
+    ctx.fillRect(this.x, this.y, this.width, this.height)
   }
-}
-
-async function setupBottomWalls() {
-  let walls = document.getElementsByClassName('wall-bottom')
-  if (walls.length < 1) {
-    let wall = document.createElement('div')
-    wall.style.height = Math.floor((Math.random() * 150) + 100) + "px"
-    wall.style.width = "25px"
-    wall.style.backgroundColor = "#000"
-    wall.style.left = "480px"
-    wall.style.top = 505 - parseInt(wall.style.height) + "px"
-    wall.style.position = "absolute"
-    wall.setAttribute("class", "wall-bottom")
-    game.appendChild(wall)
-    walls = document.getElementsByClassName('wall-bottom')
+  //Function to move the component by X and Y
+  this.move = function(x, y) {
+    //Set the X coordinate to move x distance
+    this.x += x
+    //Set the Y coordinate to move y distance
+    this.y += y
   }
-}
-
-async function hitGround() {
-  if (parseInt(bird.style.top) >= 450) {
-    bird.style.top = "450px"
-    return true
-  }
-}
-
-async function hitRoof() {
-  if (parseInt(bird.style.top) <= 20) {
-    bird.style.top = "20px"
-    return true
-  }
-}
-
-async function fall() {
-  if (!jumping) {
-    for (var i=0;i<1;i += 2) {
-      bird.style.top = parseInt(bird.style.top) + 2 + 'px'
+  //Function to make component jump
+  this.jump = async function() {
+    //Set jumping state to true
+    this.jumping = true
+    //We want to move 30 * 2 spaces up
+    for (var i = 0; i < 30; i++) {
+      //Sleep to make it smoother
       await sleep(1)
+      //Move it up 2 at a time
+      this.y -= 2
+    }
+    //Set jumping state to false after our jump
+    this.jumping = false
+  }
+  //Falling state of the component
+  this.fall = async function() {
+    //Check if jumping, if not continue
+    if (!this.jumping) {
+      //We want to fall 5 spaces, because its always falling unless its jumping smaller is smoother
+      for (var i = 0; i < 5; i++) {
+        //Sleep for 1ms
+        await sleep(1)
+        //Move Y by 1 space
+        this.y += 1
+      }
+    }
+  }
+  //Function to set setDimensions of the component
+  this.setDimensions = function(w, h) {
+    //Set the width to W
+    this.width = w
+    //Set the height to H
+    this.height = h
+  }
+  //Function to check if component is overlapping another component
+  this.overLap = function(other) {
+    //Gives us distance from other component X
+    let overlapX = this.x - other.x
+    //Gives us distance from other component Y
+    let overlapY = this.y - other.y
+    //Check if overlapping and then return true
+    if (Math.abs(overlapX) <= this.width && Math.abs(overlapY) <= other.height) {
+      return true
     }
   }
 }
 
-async function jump() {
-  if (dead) { return false }
-  for (var i=0;i<75;i += 2) {
-    jumping = true
-    bird.style.top = parseInt(bird.style.top) - 2 + 'px'
-    await sleep(2)
+//Update our game area
+function updateGameArea() {
+  //Check if game over, early exit
+  if (gameArea.over) {
+    return console.log("GAMEOVER")
   }
-  jumping = false
+  //Perform overlap check, early exit
+  if (playerOne.overLap(wallA) || playerOne.overLap(wallB) || playerTwo.overLap(wallA) || playerTwo.overLap(wallB)) {
+    gameArea.over = true
+    return
+  }
+  //Clear game area on frame update
+  gameArea.clear()
+  //Let player one fall
+  playerOne.fall()
+  //Let player two fall
+  playerTwo.fall()
+  //Check if the walls are
+  if (wallA.x <= 0 && wallB.x <= 0) {
+    //Random height for wall a
+    let heightA = Math.floor(Math.random() * 200)
+    //Random height for wall b
+    let heightB = Math.floor(Math.random() * 200)
+    //Change setDimensions with random height
+    wallA.setDimensions(20, heightA)
+    //Reset position to right
+    wallA.x = 500
+    //Change setDimensions with random height
+    wallB.setDimensions(20, heightB)
+    //Reset position to right
+    wallB.x = 500
+  }
+  //Move left every frame
+  wallA.move(-1, 0)
+  //Move left every frame
+  wallB.move(-1, 0)
+  //Update component position
+  wallA.update()
+  //Update component position
+  wallB.update()
+  //Update component position
+  playerOne.update()
+  //Update component position
+  playerTwo.update()
 }
 
-document.body.onkeyup = function(e){
-    if(e.keyCode == 32){
-        jump()
-    }
+//Start the game function
+function startGame() {
+  //Setup the game canvas
+  gameArea.start()
+  //Setup player 1
+  playerOne = new component("player-one",50, 50, "white", 230, 230)
+  //Setup player 2
+  playerTwo = new component("player-two",50, 50, "blue", 230, 230)
+  //Setup wall a
+  wallA = new component("wallA",20, 100, "red", 500, 0)
+  //Setup wall b
+  wallB = new component("wallB",20, 100, "red", 500, 400)
 }
 
-setInterval(function () {
-  if (dead) {
-    return console.log("Game over")
+//Register player 1 and player 2 jumpings
+document.body.onkeyup = function(e) {
+  if (e.keyCode == 32) {
+    playerOne.jump()
   }
-  let wallsTop = document.getElementsByClassName('wall-top')
-  let wallsBottom = document.getElementsByClassName('wall-bottom')
+  if (e.keyCode == 38) {
+    playerTwo.jump()
+  }
+}
 
-  //Game bounding
-  hitRoof()
-  hitGround().then(x => {
-    if (x) {
-      dead = true
-    }
-  })
-
-  //Walls
-  setupTopWalls()
-  setupBottomWalls()
-  removeWalls()
-
-  fall()
-
-  overLap()
-
-  Array.prototype.forEach.call(wallsTop, function(el) {
-    moveWallLeft(el)
-  })
-  Array.prototype.forEach.call(wallsBottom, function(el) {
-    moveWallLeft(el)
-  })
-}, 10);
+//Start the game
+startGame()
