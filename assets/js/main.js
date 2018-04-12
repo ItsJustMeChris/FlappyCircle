@@ -32,9 +32,11 @@ var gameArea = {
   }
 }
 
-function textElement(content,x,y) {
+function textElement(content, x, y) {
+  //Get our game area context
   ctx = gameArea.context
-  ctx.font = "30px Comic Sans MS";
+  //Set the font style
+  ctx.font = "20px Arial";
   ctx.fillStyle = "red";
   ctx.textAlign = "center";
   ctx.fillText(content, x, y);
@@ -42,7 +44,7 @@ function textElement(content,x,y) {
   this.update = function(content) {
     //Get our context
     ctx = gameArea.context
-    ctx.font = "30px Comic Sans MS";
+    ctx.font = "20px Arial";
     ctx.fillStyle = "red";
     ctx.textAlign = "center";
     ctx.fillText(content, x, y);
@@ -178,9 +180,9 @@ function updateGameArea() {
     wallB.x = 500
   }
   //Move left every frame
-  wallA.move(-10, 0)
+  wallA.move(-5 - playerOne.score/2, 0)
   //Move left every frame
-  wallB.move(-10, 0)
+  wallB.move(-5 - playerOne.score/2, 0)
   //Update component position
   wallA.update()
   //Update component position
@@ -197,7 +199,7 @@ function startGame() {
   //Setup player 1
   playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.height / 2 - 25, gameArea.canvas.width / 2 - 25)
   //Setup wall a
-  playerScore = new textElement('Score: ' + playerOne.score,100,100)
+  playerScore = new textElement('Score: ' + playerOne.score, 400, 20)
   wallA = new component("wallA", 20, 100, "red", 500, 0)
   //Setup wall b
   wallB = new component("wallB", 20, 100, "red", 500, 400)
