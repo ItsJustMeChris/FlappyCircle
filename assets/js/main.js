@@ -3,7 +3,25 @@ function sleep(ms) {
   //Return a timeout function for x ms
   return new Promise(resolve => setTimeout(resolve, ms))
 }
+function getWidth() {
+  return Math.max(
+    document.body.scrollWidth,
+    document.documentElement.scrollWidth,
+    document.body.offsetWidth,
+    document.documentElement.offsetWidth,
+    document.documentElement.clientWidth
+  );
+}
 
+function getHeight() {
+  return Math.max(
+    document.body.scrollHeight,
+    document.documentElement.scrollHeight,
+    document.body.offsetHeight,
+    document.documentElement.offsetHeight,
+    document.documentElement.clientHeight
+  );
+}
 //Create our game area object
 var gameArea = {
   //Create the canvas for the game
@@ -14,9 +32,9 @@ var gameArea = {
   //Function to start the game
   start: function() {
     //The canvas width
-    this.canvas.width = 500
+    this.canvas.width = getWidth()
     //The canvas height
-    this.canvas.height = 500
+    this.canvas.height = getHeight()
     //Make the background grey
     this.canvas.style.background = "#333"
     //Get the canvas context (data)
@@ -121,8 +139,8 @@ function component(name, width, height, color, x, y, borderRadius) {
     if (!this.alive) {
       return false
     }
-    if (this.y >= 500 - this.height) {
-      this.y = 500 - this.height
+    if (this.y >= gameArea.canvas.height - this.height) {
+      this.y = gameArea.canvas.height - this.height
       return
     }
     //Check if jumping, if not continue
@@ -155,14 +173,14 @@ function component(name, width, height, color, x, y, borderRadius) {
 //Update our game area
 function updateGame() {
   if (!gameArea.started) {
-    gameOver = new textElement("Click to start", 250, 200, 40, "white")
+    gameStart = new textElement("Click to start", gameArea.canvas.height/2, gameArea.canvas.width/2, 40, "white")
     return
   }
   //Check if game over, early exit
   if (!playerOne.alive) {
     gameArea.over = true
     //Game over text
-    gameOver = new textElement("GAMEOVER (Click to restart)", 250, 250, 30, "white")
+    gameOver = new textElement("GAMEOVER (Click to restart)", gameArea.canvas.height/2, gameArea.canvas.width/2, 30, "white")
     return
   }
   //Perform overlap check, early exit
@@ -187,17 +205,17 @@ function updateGame() {
     //Ok, next level you can have scores
     playerOne.shouldScore = true
     //Random height for wall a
-    let heightA = Math.floor(Math.random() * (250 - 80)) + 80
+    let heightA = Math.floor(Math.random() * (gameArea.canvas.height/2 - 80)) + 80
     //Random height for wall b
-    let heightB = Math.floor(Math.random() * (250 - 80)) + 80
+    let heightB = Math.floor(Math.random() * (gameArea.canvas.height/2 - 80)) + 80
     //Change setDimensions with random height
     wallA.setDimensions(20, heightA)
     //Reset position to right
-    wallA.x = 500
+    wallA.x = gameArea.canvas.width
     //Change setDimensions with random height
     wallB.setDimensions(20, heightB)
     //Reset position to right
-    wallB.x = 500
+    wallB.x = gameArea.canvas.width
   }
   //Move left every frame
   wallA.move(-5 - playerOne.score / 2, 0)
@@ -218,13 +236,13 @@ function startGame() {
   //Setup the game canvas
   gameArea.start()
   //Setup player 1
-  playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.height / 2 - 25, gameArea.canvas.width / 2 - 25)
+  playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.height / 2, gameArea.canvas.width / 2)
   //Setup wall a
-  wallA = new component("wallA", 20, 100, "red", 500, 0)
+  wallA = new component("wallA", 20, 100, "red", gameArea.canvas.width, 0)
   //Setup wall b
-  wallB = new component("wallB", 20, 100, "red", 500, 400)
+  wallB = new component("wallB", 20, 100, "red", gameArea.canvas.width, gameArea.canvas.height-100)
   //Setup score text
-  playerScore = new textElement('Score: ' + playerOne.score, 400, 20, 20, "red")
+  playerScore = new textElement('Score: ' + playerOne.score, gameArea.canvas.width-100, 20, 20, "red")
 }
 
 //Register player 1 and player 2 jumpings
@@ -237,13 +255,13 @@ document.addEventListener('click', function() {
     //Set game over false
     gameArea.over = false
     //Setup player 1
-    playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.height / 2 - 25, gameArea.canvas.width / 2 - 25)
+    playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.height / 2, gameArea.canvas.width / 2)
     //Setup wall a
-    wallA = new component("wallA", 20, 100, "red", 500, 0)
+    wallA = new component("wallA", 20, 100, "red", gameArea.canvas.width, 0)
     //Setup wall b
-    wallB = new component("wallB", 20, 100, "red", 500, 400)
+    wallB = new component("wallB", 20, 100, "red", gameArea.canvas.width, gameArea.canvas.height-100)
     //Setup score text
-    playerScore = new textElement('Score: ' + playerOne.score, 400, 20, 20, "red")
+    playerScore = new textElement('Score: ' + playerOne.score, gameArea.canvas.width-100, 20, 20, "red")
   }
   playerOne.jump()
 })
