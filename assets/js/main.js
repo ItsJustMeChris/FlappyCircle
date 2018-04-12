@@ -4,7 +4,7 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-//Create our game area
+//Create our game area object
 var gameArea = {
   //Create the canvas for the game
   canvas: document.createElement("canvas"),
@@ -200,9 +200,9 @@ function updateGame() {
     wallB.x = 500
   }
   //Move left every frame
-  wallA.move(-5 - playerOne.score/2, 0)
+  wallA.move(-5 - playerOne.score / 2, 0)
   //Move left every frame
-  wallB.move(-5 - playerOne.score/2, 0)
+  wallB.move(-5 - playerOne.score / 2, 0)
   //Update component position
   wallA.update()
   //Update component position
@@ -232,7 +232,7 @@ document.addEventListener('click', function() {
   if (!gameArea.started) {
     gameArea.started = true
   }
-  if(gameArea.over) {
+  if (gameArea.over) {
     //NEED TO RECREATE ELEMENTS TO RESTART THE GAME AND CLEAR THEIR STATES
     //Set game over false
     gameArea.over = false
