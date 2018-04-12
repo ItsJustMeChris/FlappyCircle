@@ -32,21 +32,29 @@ var gameArea = {
   }
 }
 
+//Create a text element in our game
 function textElement(content, x, y) {
   //Get our game area context
   ctx = gameArea.context
   //Set the font style
   ctx.font = "20px Arial";
+  //Set the font color
   ctx.fillStyle = "red";
+  //Set the font alignment
   ctx.textAlign = "center";
+  //Place the text
   ctx.fillText(content, x, y);
-  //component update function
+  //Text update function
   this.update = function(content) {
-    //Get our context
+    //Get our game area context
     ctx = gameArea.context
+    //Set the font style
     ctx.font = "20px Arial";
+    //Set the font color
     ctx.fillStyle = "red";
+    //Set the font alignment
     ctx.textAlign = "center";
+    //Place the text
     ctx.fillText(content, x, y);
   }
 }
@@ -149,14 +157,16 @@ function updateGameArea() {
   if (!playerOne.alive) {
     return console.log("GAMEOVER")
   }
-  console.log(playerOne.score)
   //Perform overlap check, early exit
   if (playerOne.alive && (playerOne.overLap(wallA) || playerOne.overLap(wallB))) {
     playerOne.alive = false
     return
   }
+  //Is our player passed the walls and have we scored this round yet?
   if (playerOne.x >= wallA.x && playerOne.shouldScore) {
+    //We are scoring, so you don't need anymore points this level
     playerOne.shouldScore = false
+    //Add score
     playerOne.score++
   }
   //Clear game area on frame update
@@ -165,6 +175,7 @@ function updateGameArea() {
   playerOne.fall()
   //Check if the walls are
   if (wallA.x <= 0 && wallB.x <= 0) {
+    //Ok, next level you can have scores
     playerOne.shouldScore = true
     //Random height for wall a
     let heightA = Math.floor(Math.random() * (250 - 80)) + 80
@@ -187,6 +198,7 @@ function updateGameArea() {
   wallA.update()
   //Update component position
   wallB.update()
+  //Update score text
   playerScore.update("Score: " + playerOne.score)
   //Update component position
   playerOne.update()
@@ -199,10 +211,11 @@ function startGame() {
   //Setup player 1
   playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.height / 2 - 25, gameArea.canvas.width / 2 - 25)
   //Setup wall a
-  playerScore = new textElement('Score: ' + playerOne.score, 400, 20)
   wallA = new component("wallA", 20, 100, "red", 500, 0)
   //Setup wall b
   wallB = new component("wallB", 20, 100, "red", 500, 400)
+  //Setup score text
+  playerScore = new textElement('Score: ' + playerOne.score, 400, 20)
 }
 
 //Register player 1 and player 2 jumpings
