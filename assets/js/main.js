@@ -10,6 +10,7 @@ var gameArea = {
   canvas: document.createElement("canvas"),
   //Current game state
   over: false,
+  started: false,
   //Function to start the game
   start: function() {
     //The canvas width
@@ -33,13 +34,13 @@ var gameArea = {
 }
 
 //Create a text element in our game
-function textElement(content, x, y) {
+function textElement(content, x, y, size, color) {
   //Get our game area context
   ctx = gameArea.context
   //Set the font style
-  ctx.font = "20px Arial";
+  ctx.font = size + "px Arial";
   //Set the font color
-  ctx.fillStyle = "red";
+  ctx.fillStyle = color;
   //Set the font alignment
   ctx.textAlign = "center";
   //Place the text
@@ -49,9 +50,9 @@ function textElement(content, x, y) {
     //Get our game area context
     ctx = gameArea.context
     //Set the font style
-    ctx.font = "20px Arial";
+    ctx.font = size + "px Arial";
     //Set the font color
-    ctx.fillStyle = "red";
+    ctx.fillStyle = color;
     //Set the font alignment
     ctx.textAlign = "center";
     //Place the text
@@ -153,9 +154,16 @@ function component(name, width, height, color, x, y, borderRadius) {
 
 //Update our game area
 function updateGame() {
+  if (!gameArea.started) {
+    gameOver = new textElement("Click to start", 250, 200, 40, "white")
+    return
+  }
   //Check if game over, early exit
   if (!playerOne.alive) {
-    return console.log("GAMEOVER")
+    gameArea.over = true
+    //Game over text
+    gameOver = new textElement("GAMEOVER (Click to restart)", 250, 250, 30, "white")
+    return
   }
   //Perform overlap check, early exit
   if (playerOne.alive && (playerOne.overLap(wallA) || playerOne.overLap(wallB))) {
@@ -215,17 +223,28 @@ function startGame() {
   //Setup wall b
   wallB = new component("wallB", 20, 100, "red", 500, 400)
   //Setup score text
-  playerScore = new textElement('Score: ' + playerOne.score, 400, 20)
+  playerScore = new textElement('Score: ' + playerOne.score, 400, 20, 20, "red")
 }
 
 //Register player 1 and player 2 jumpings
 document.addEventListener('click', function() {
+  if (!gameArea.started) {
+    gameArea.started = true
+  }
+  if(gameArea.over) {
+    //NEED TO RECREATE ELEMENTS TO RESTART THE GAME AND CLEAR THEIR STATES
+    //Set game over false
+    gameArea.over = false
+    //Setup player 1
+    playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.height / 2 - 25, gameArea.canvas.width / 2 - 25)
+    //Setup wall a
+    wallA = new component("wallA", 20, 100, "red", 500, 0)
+    //Setup wall b
+    wallB = new component("wallB", 20, 100, "red", 500, 400)
+    //Setup score text
+    playerScore = new textElement('Score: ' + playerOne.score, 400, 20, 20, "red")
+  }
   playerOne.jump()
 })
 
-document.addEventListener('touchend', function() {
-  playerOne.jump()
-})
-
-//Start the game
 startGame()
