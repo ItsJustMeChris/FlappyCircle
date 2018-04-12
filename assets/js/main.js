@@ -32,9 +32,28 @@ var gameArea = {
   }
 }
 
+function textElement(content,x,y) {
+  ctx = gameArea.context
+  ctx.font = "30px Comic Sans MS";
+  ctx.fillStyle = "red";
+  ctx.textAlign = "center";
+  ctx.fillText(content, x, y);
+  //component update function
+  this.update = function(content) {
+    //Get our context
+    ctx = gameArea.context
+    ctx.font = "30px Comic Sans MS";
+    ctx.fillStyle = "red";
+    ctx.textAlign = "center";
+    ctx.fillText(content, x, y);
+  }
+}
+
 //Function to create a game element
-function component(name,width, height, color, x, y, borderRadius) {
+function component(name, width, height, color, x, y, borderRadius) {
   this.alive = true
+  this.shouldScore = true
+  this.score = 0
   //Set component name
   this.name = name
   //Set component width
@@ -91,6 +110,10 @@ function component(name,width, height, color, x, y, borderRadius) {
     if (!this.alive) {
       return false
     }
+    if (this.y >= 500 - this.height) {
+      this.y = 500 - this.height
+      return
+    }
     //Check if jumping, if not continue
     if (!this.jumping) {
       //We want to fall 5 spaces, because its always falling unless its jumping smaller is smoother
@@ -111,14 +134,10 @@ function component(name,width, height, color, x, y, borderRadius) {
   }
   //Function to check if component is overlapping another component
   this.overLap = function(other) {
-    //Gives us distance from other component X
-    let overlapX = this.x - other.x
-    //Gives us distance from other component Y
-    let overlapY = this.y - other.y
-    //Check if overlapping and then return true
-    if (Math.abs(overlapX) <= this.width && Math.abs(overlapY) <= other.height) {
-      return true
-    }
+    return !(other.x > (this.x + this.width) ||
+      (other.x + other.width) < this.x ||
+      other.y > (this.y + this.height) ||
+      (other.y + other.height) < this.y)
   }
 }
 
@@ -128,10 +147,15 @@ function updateGameArea() {
   if (!playerOne.alive) {
     return console.log("GAMEOVER")
   }
+  console.log(playerOne.score)
   //Perform overlap check, early exit
   if (playerOne.alive && (playerOne.overLap(wallA) || playerOne.overLap(wallB))) {
     playerOne.alive = false
     return
+  }
+  if (playerOne.x >= wallA.x && playerOne.shouldScore) {
+    playerOne.shouldScore = false
+    playerOne.score++
   }
   //Clear game area on frame update
   gameArea.clear()
@@ -139,10 +163,11 @@ function updateGameArea() {
   playerOne.fall()
   //Check if the walls are
   if (wallA.x <= 0 && wallB.x <= 0) {
+    playerOne.shouldScore = true
     //Random height for wall a
-    let heightA = Math.floor(Math.random() * 200)
+    let heightA = Math.floor(Math.random() * (250 - 80)) + 80
     //Random height for wall b
-    let heightB = Math.floor(Math.random() * 200)
+    let heightB = Math.floor(Math.random() * (250 - 80)) + 80
     //Change setDimensions with random height
     wallA.setDimensions(20, heightA)
     //Reset position to right
@@ -153,13 +178,14 @@ function updateGameArea() {
     wallB.x = 500
   }
   //Move left every frame
-  wallA.move(-1, 0)
+  wallA.move(-10, 0)
   //Move left every frame
-  wallB.move(-1, 0)
+  wallB.move(-10, 0)
   //Update component position
   wallA.update()
   //Update component position
   wallB.update()
+  playerScore.update("Score: " + playerOne.score)
   //Update component position
   playerOne.update()
 }
@@ -169,11 +195,12 @@ function startGame() {
   //Setup the game canvas
   gameArea.start()
   //Setup player 1
-  playerOne = new component("player-one",50, 50, "white", 230, 230)
+  playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.height / 2 - 25, gameArea.canvas.width / 2 - 25)
   //Setup wall a
-  wallA = new component("wallA",20, 100, "red", 500, 0)
+  playerScore = new textElement('Score: ' + playerOne.score,100,100)
+  wallA = new component("wallA", 20, 100, "red", 500, 0)
   //Setup wall b
-  wallB = new component("wallB",20, 100, "red", 500, 400)
+  wallB = new component("wallB", 20, 100, "red", 500, 400)
 }
 
 //Register player 1 and player 2 jumpings
