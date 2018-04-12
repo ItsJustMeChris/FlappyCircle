@@ -178,6 +178,7 @@ function updateGame() {
     playerOne.score++
   }
   //Clear game area on frame update
+  //Turn this off to play hard mode :P
   gameArea.clear()
   //Let player one fall
   playerOne.fall()
