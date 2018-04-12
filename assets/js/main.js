@@ -23,7 +23,7 @@ var gameArea = {
     //Add this canvas to the HTML Dom
     document.body.insertBefore(this.canvas, document.body.childNodes[0])
     //Our game update rate
-    this.interval = setInterval(updateGameArea, 20)
+    this.interval = setInterval(updateGame, 20)
   },
   //Clear the canvas
   clear: function() {
@@ -152,7 +152,7 @@ function component(name, width, height, color, x, y, borderRadius) {
 }
 
 //Update our game area
-function updateGameArea() {
+function updateGame() {
   //Check if game over, early exit
   if (!playerOne.alive) {
     return console.log("GAMEOVER")
