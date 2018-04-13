@@ -271,17 +271,18 @@ function updateGame() {
       //Add score
       playerOne.score++
     }
-    wall.move(-5 - playerOne.score / 2, 0)
+    wall.move(-5 - playerOne.score / 5, 0)
     wall.update()
     if (wall.x <= 0) {
       gameArea.walls.splice(0,2)
+      playerOne.shouldScore = true
     }
     lastWall = gameArea.walls[gameArea.walls.length-1]
     if (lastWall == undefined || lastWall.x <= gameArea.canvas.width / 2 - 100) {
       gameArea.walls[gameArea.walls.length] = new component("wallA", 20, Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80, "red", gameArea.canvas.width, 0)
       lastWall = gameArea.walls[gameArea.walls.length]
       gameArea.walls[gameArea.walls.length] = new component("wallB", 20, Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80, "red",
-      gameArea.canvas.width, Math.floor(Math.random() * (400)) + 450)
+      gameArea.canvas.width, Math.floor(Math.random() * (gameArea.canvas.height/5)) + 450)
     }
   })
   //Update score text
