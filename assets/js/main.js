@@ -235,7 +235,9 @@ function updateGame() {
     return
   }
   if (!gameArea.started) {
+    //Start game text
     gameStart = new textElement("Click to start", gameArea.canvas.width / 2, gameArea.canvas.height / 2 - 50, 40, "white")
+    //Fast exit
     return
   }
   //Check if game over, early exit
