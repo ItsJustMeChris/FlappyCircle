@@ -12,7 +12,8 @@ function getWidth() {
     document.documentElement.scrollWidth,
     document.body.offsetWidth,
     document.documentElement.offsetWidth,
-    document.documentElement.clientWidth
+    document.documentElement.clientWidth,
+    500
   )
 }
 
@@ -24,7 +25,8 @@ function getHeight() {
     document.documentElement.scrollHeight,
     document.body.offsetHeight,
     document.documentElement.offsetHeight,
-    document.documentElement.clientHeight
+    document.documentElement.clientHeight,
+    500
   )
 }
 
@@ -146,7 +148,7 @@ function component(name, width, height, color, x, y, image) {
   if (image) {
     img = new Image();
     img.src = image;
-    ctx.drawImage(img, this.x, this.y, 50,50)
+    ctx.drawImage(img, this.x, this.y, 50, 50)
 
   } else {
     ctx.fillRect(this.x, this.y, this.width, this.height)
@@ -160,7 +162,7 @@ function component(name, width, height, color, x, y, image) {
     if (image) {
       img = new Image();
       img.src = image;
-      ctx.drawImage(img, this.x, this.y, 50,50)
+      ctx.drawImage(img, this.x, this.y, 50, 50)
     } else {
       //Set fill style to color
       ctx.fillStyle = color
@@ -242,6 +244,11 @@ function component(name, width, height, color, x, y, image) {
 
 //Update our game area
 function updateGame() {
+  var devtools = /./;
+  var element = document.querySelector('#devtool-status');
+  if (element) {
+    console.log("HI")
+  }
   //Check if the game is over
   if (gameArea.over) {
     //It is over, fast exit
@@ -294,14 +301,14 @@ function updateGame() {
     //Remove walls off screen
     if (wall.x <= 0) {
       //Remove two elements from our walls array to remove both the top and bottom walls
-      gameArea.walls.splice(0,2)
+      gameArea.walls.splice(0, 2)
       //We can score again now
       playerOne.shouldScore = true
     }
     //Set our last game wall element to make adding more walls simpler
     //Other answer is to make a for() loop or use gameArea.walls.length -1 in
     //The walls[] array
-    gameArea.lastWall = gameArea.walls[gameArea.walls.length-1]
+    gameArea.lastWall = gameArea.walls[gameArea.walls.length - 1]
     //Check if our wall is halfscreen - 100px to the left, we can create another now
     if (gameArea.lastWall == undefined || gameArea.lastWall.x <= gameArea.canvas.width / 2 - 100) {
       //Create our top wall
@@ -310,7 +317,7 @@ function updateGame() {
       gameArea.lastWall = gameArea.walls[gameArea.walls.length]
       //Create our bottom wall
       gameArea.walls[gameArea.walls.length] = new component("wallB", 20, Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80, "red",
-      gameArea.canvas.width, Math.floor(Math.random() * (gameArea.canvas.height/5)) + 450)
+        gameArea.canvas.width, Math.floor(Math.random() * (gameArea.canvas.height / 5)) + 450)
     }
   })
   //Check if the walls are
