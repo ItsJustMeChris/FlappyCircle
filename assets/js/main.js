@@ -44,6 +44,10 @@ var gameArea = {
   jumpSound: new Audio('assets/audio/jump.mp3'),
   //Audio element to play when player dies
   hitWallSound: new Audio('assets/audio/hitWall.mp3'),
+  //Game walls list
+  walls: [],
+  //Our last wall object, to be able to make walls properly..
+  lastWall: undefined,
   //Function to start the game
   start: function() {
     //The canvas width
@@ -243,20 +247,17 @@ function updateGame() {
     return
   }
   //Perform overlap check, early exit
-  if (playerOne.alive && (playerOne.overLap(wallA) || playerOne.overLap(wallB))) {
-    //Play our hit wall sound when the player hits a wall
-    gameArea.hitWallSound.play()
-    //Player is dead, we can end
-    playerOne.alive = false
-    //Fast exit
-    return
-  }
-  //Is our player passed the walls and have we scored this round yet?
-  if (playerOne.x >= wallA.x && playerOne.shouldScore) {
-    //We are scoring, so you don't need anymore points this level
-    playerOne.shouldScore = false
-    //Add score
-    playerOne.score++
+  if (playerOne.alive) {
+    gameArea.walls.forEach(wall => {
+      if (playerOne.overLap(wall)) {
+        //Play our hit wall sound when the player hits a wall
+        gameArea.hitWallSound.play()
+        //Player is dead, we can end
+        playerOne.alive = false
+        //Fast exit
+        return
+      }
+    })
   }
   //Clear game area on frame update
   //Turn this off to play hard mode :P
@@ -264,30 +265,25 @@ function updateGame() {
   //Let player one fall
   playerOne.fall()
   //Check if the walls are
-  if (wallA.x <= 0 && wallB.x <= 0) {
-    //Ok, next level you can have scores
-    playerOne.shouldScore = true
-    //Random height for wall a
-    let heightA = Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80
-    //Random height for wall b
-    let heightB = Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80
-    //Change setDimensions with random height
-    wallA.setDimensions(20, heightA)
-    //Reset position to right
-    wallA.x = gameArea.canvas.width
-    //Change setDimensions with random height
-    wallB.setDimensions(20, heightB)
-    //Reset position to right
-    wallB.x = gameArea.canvas.width
-  }
-  //Move left every frame
-  wallA.move(-5 - playerOne.score / 2, 0)
-  //Move left every frame
-  wallB.move(-5 - playerOne.score / 2, 0)
-  //Update component position
-  wallA.update()
-  //Update component position
-  wallB.update()
+  gameArea.walls.forEach(wall => {
+    if (playerOne.x >= wall.x && playerOne.shouldScore) {
+      playerOne.shouldScore = false
+      //Add score
+      playerOne.score++
+    }
+    wall.move(-5 - playerOne.score / 2, 0)
+    wall.update()
+    if (wall.x <= 0) {
+      gameArea.walls.splice(0,2)
+    }
+    lastWall = gameArea.walls[gameArea.walls.length-1]
+    if (lastWall == undefined || lastWall.x <= gameArea.canvas.width / 2 - 100) {
+      gameArea.walls[gameArea.walls.length] = new component("wallA", 20, Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80, "red", gameArea.canvas.width, 0)
+      lastWall = gameArea.walls[gameArea.walls.length]
+      gameArea.walls[gameArea.walls.length] = new component("wallB", 20, Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80, "red",
+      gameArea.canvas.width, Math.floor(Math.random() * (400)) + 450)
+    }
+  })
   //Update score text
   playerScore.update("Score: " + playerOne.score)
   //Update our game framerate variable
@@ -304,9 +300,9 @@ function startGame() {
   console.log(gameArea.canvas.height / 2, gameArea.canvas.width / 2)
   playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.width / 2 - 25, gameArea.canvas.height / 2 - 25)
   //Setup wall a
-  wallA = new component("wallA", 20, 100, "red", gameArea.canvas.width, 0)
+  gameArea.walls[0] = new component("wallA", 20, 100, "red", gameArea.canvas.width, 0)
   //Setup wall b
-  wallB = new component("wallB", 20, 100, "red", gameArea.canvas.width, gameArea.canvas.height - 100)
+  gameArea.walls[1] = new component("wallB", 20, 100, "red", gameArea.canvas.width, gameArea.canvas.height - 100)
   //Setup score text
   playerScore = new textElement('Score: ' + playerOne.score, gameArea.canvas.width - 100, 20, 20, "red")
   //Setup FPS text
@@ -327,9 +323,9 @@ document.addEventListener('click', function() {
     //Setup player 1
     playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.width / 2 - 25, gameArea.canvas.height / 2 - 25)
     //Setup wall a
-    wallA = new component("wallA", 20, 100, "red", gameArea.canvas.width, 0)
+    gameArea.walls[0] = new component("wallA", 20, 100, "red", gameArea.canvas.width, 0)
     //Setup wall b
-    wallB = new component("wallB", 20, 100, "red", gameArea.canvas.width, gameArea.canvas.height - 100)
+    gameArea.walls[1] = new component("wallB", 20, 100, "red", gameArea.canvas.width, gameArea.canvas.height - 100)
     //Setup score text
     playerScore = new textElement('Score: ' + playerOne.score, gameArea.canvas.width - 100, 20, 20, "red")
     //Setup FPS text
