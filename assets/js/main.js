@@ -51,7 +51,7 @@ var gameArea = {
   //Our last wall object, to be able to make walls properly..
   lastWall: undefined,
   //Function to start the game
-  start: function() {
+  start: function () {
     //The canvas width
     this.canvas.width = getWidth()
     //The canvas height
@@ -66,12 +66,12 @@ var gameArea = {
     this.interval = setInterval(updateGame, 10)
   },
   //Clear the canvas
-  clear: function() {
+  clear: function () {
     //Set the context to nothing
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
   },
   //Calculate our game framerate
-  getFramerate: function() {
+  getFramerate: function () {
     //Get a last call time of the function
     if (!this.lastCall) {
       //Get the last call time
@@ -105,7 +105,7 @@ function textElement(content, x, y, size, color) {
   //Place the text
   ctx.fillText(content, x, y);
   //Text update function
-  this.update = function(content) {
+  this.update = function (content) {
     //Get our game area context
     ctx = gameArea.context
     //Set the font style
@@ -156,7 +156,7 @@ function component(name, width, height, color, x, y, image) {
   //Set jumping state to false
   this.jumping = false
   //component update function
-  this.update = function(image) {
+  this.update = function (image) {
     //Get our context
     ctx = gameArea.context
     if (image) {
@@ -171,14 +171,14 @@ function component(name, width, height, color, x, y, image) {
     }
   }
   //Function to move the component by X and Y
-  this.move = function(x, y) {
+  this.move = function (x, y) {
     //Set the X coordinate to move x distance
     this.x += x
     //Set the Y coordinate to move y distance
     this.y += y
   }
   //Function to make component jump
-  this.jump = async function() {
+  this.jump = async function () {
     //Play our jump sound at the start of the jump
     gameArea.jumpSound.play()
     //If the entity is not alive, don't move
@@ -203,7 +203,7 @@ function component(name, width, height, color, x, y, image) {
     this.jumping = false
   }
   //Falling state of the component
-  this.fall = async function() {
+  this.fall = async function () {
     //If the entity is not alive, don't move
     if (!this.alive) {
       //Quick escape, don't need to stay in the function longer
@@ -227,14 +227,14 @@ function component(name, width, height, color, x, y, image) {
     }
   }
   //Function to set setDimensions of the component
-  this.setDimensions = function(w, h) {
+  this.setDimensions = function (w, h) {
     //Set the width to W
     this.width = w
     //Set the height to H
     this.height = h
   }
   //Function to check if component is overlapping another component
-  this.overLap = function(other) {
+  this.overLap = function (other) {
     return !(other.x > (this.x + this.width) ||
       (other.x + other.width) < this.x ||
       other.y > (this.y + this.height) ||
@@ -347,7 +347,7 @@ function startGame() {
 }
 
 //Register player 1 and player 2 jumpings
-document.addEventListener('click', function() {
+document.addEventListener('click', function () {
   //If the game is not started, we can start it now
   if (!gameArea.started) {
     //Start the game
