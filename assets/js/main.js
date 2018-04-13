@@ -72,8 +72,8 @@ var gameArea = {
       this.lastCall = performance.now()
       //Set the fps to 0, fallback if it failed to be set as an int
       this.fps = 0
-      //We are done for now
-      return
+      //We are done for now, since we call this on fps create, let's return the fps
+      return this.fps
     }
     //Delta is the difference of the last call and our current call times divided by 1000 (1 second in ms)
     let delta = (performance.now() - this.lastCall) / 1000
