@@ -37,6 +37,8 @@ var gameArea = {
   started: false,
   fps: 0,
   lastCall: 0,
+  jumpSound: new Audio('assets/audio/jump.mp3'),
+  hitWallSound: new Audio('assets/audio/hitWall.mp3'),
   //Function to start the game
   start: function() {
     //The canvas width
@@ -153,6 +155,7 @@ function component(name, width, height, color, x, y, borderRadius) {
   }
   //Function to make component jump
   this.jump = async function() {
+    gameArea.jumpSound.play()
     //If the entity is not alive, don't move
     if (!this.alive) {
       //Quick escape, don't need to stay in the function longer
@@ -165,8 +168,11 @@ function component(name, width, height, color, x, y, borderRadius) {
       //Sleep to make it smoother
       await sleep(1)
       //Move it up 2 at a time
-      this.y -= 3
+      this.y -= 4
     }
+    gameArea.jumpSound.pause();
+    gameArea.jumpSound.currentTime = 0;
+
     //Set jumping state to false after our jump
     this.jumping = false
   }
@@ -225,6 +231,7 @@ function updateGame() {
   }
   //Perform overlap check, early exit
   if (playerOne.alive && (playerOne.overLap(wallA) || playerOne.overLap(wallB))) {
+    gameArea.hitWallSound.play()
     playerOne.alive = false
     return
   }
@@ -301,7 +308,7 @@ document.addEventListener('click', function() {
     //Set game over false
     gameArea.over = false
     //Setup player 1
-    playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.height / 2, gameArea.canvas.width / 2)
+    playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.width / 2 - 25, gameArea.canvas.height / 2 - 25)
     //Setup wall a
     wallA = new component("wallA", 20, 100, "red", gameArea.canvas.width, 0)
     //Setup wall b
