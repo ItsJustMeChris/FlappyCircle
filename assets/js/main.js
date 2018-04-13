@@ -246,45 +246,56 @@ function updateGame() {
     //Fast exit
     return
   }
-  //Perform overlap check, early exit
-  if (playerOne.alive) {
-    gameArea.walls.forEach(wall => {
-      if (playerOne.overLap(wall)) {
-        //Play our hit wall sound when the player hits a wall
-        gameArea.hitWallSound.play()
-        //Player is dead, we can end
-        playerOne.alive = false
-        //Fast exit
-        return
-      }
-    })
-  }
   //Clear game area on frame update
   //Turn this off to play hard mode :P
   gameArea.clear()
   //Let player one fall
   playerOne.fall()
-  //Check if the walls are
+  //Our walls loop
   gameArea.walls.forEach(wall => {
+    //Perform overlap check, early exit
+    if (playerOne.overLap(wall)) {
+      //Play our hit wall sound when the player hits a wall
+      gameArea.hitWallSound.play()
+      //Player is dead, we can end
+      playerOne.alive = false
+      //Fast exit
+      return
+    }
+    //Check the player for score
     if (playerOne.x >= wall.x && playerOne.shouldScore) {
+      //We scored, shouldn't score again yet
       playerOne.shouldScore = false
       //Add score
       playerOne.score++
     }
+    //Move our walls
     wall.move(-5 - playerOne.score / 5, 0)
+    //Update wall position
     wall.update()
+    //Remove walls off screen
     if (wall.x <= 0) {
+      //Remove two elements from our walls array to remove both the top and bottom walls
       gameArea.walls.splice(0,2)
+      //We can score again now
       playerOne.shouldScore = true
     }
-    lastWall = gameArea.walls[gameArea.walls.length-1]
-    if (lastWall == undefined || lastWall.x <= gameArea.canvas.width / 2 - 100) {
+    //Set our last game wall element to make adding more walls simpler
+    //Other answer is to make a for() loop or use gameArea.walls.length -1 in
+    //The walls[] array
+    gameArea.lastWall = gameArea.walls[gameArea.walls.length-1]
+    //Check if our wall is halfscreen - 100px to the left, we can create another now
+    if (gameArea.lastWall == undefined || gameArea.lastWall.x <= gameArea.canvas.width / 2 - 100) {
+      //Create our top wall
       gameArea.walls[gameArea.walls.length] = new component("wallA", 20, Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80, "red", gameArea.canvas.width, 0)
-      lastWall = gameArea.walls[gameArea.walls.length]
+      //Update our last wall because the top and bottom are linked
+      gameArea.lastWall = gameArea.walls[gameArea.walls.length]
+      //Create our bottom wall
       gameArea.walls[gameArea.walls.length] = new component("wallB", 20, Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80, "red",
       gameArea.canvas.width, Math.floor(Math.random() * (gameArea.canvas.height/5)) + 450)
     }
   })
+  //Check if the walls are
   //Update score text
   playerScore.update("Score: " + playerOne.score)
   //Update our game framerate variable
