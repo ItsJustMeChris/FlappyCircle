@@ -259,6 +259,9 @@ function updateGame() {
       gameArea.hitWallSound.play()
       //Player is dead, we can end
       playerOne.alive = false
+      //For some reason you have to update the wall when the player dies
+      //Or the wall he hits stops showing up
+      wall.update()
       //Fast exit
       return
     }
