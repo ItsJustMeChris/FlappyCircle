@@ -118,7 +118,7 @@ function textElement(content, x, y, size, color) {
 }
 
 //Function to create a game element
-function component(name, width, height, color, x, y, borderRadius) {
+function component(name, width, height, color, x, y, image) {
   //Is our player alive?
   //This does not really need to be here because it's not multiplayer, but adds
   //Capability for more than 1 'bird'
@@ -143,17 +143,30 @@ function component(name, width, height, color, x, y, borderRadius) {
   //Fill the context with color
   ctx.fillStyle = color
   //Do the filling at X,Y of XWidth of XHeight
-  ctx.fillRect(this.x, this.y, this.width, this.height)
+  if (image) {
+    img = new Image();
+    img.src = image;
+    ctx.drawImage(img, this.x, this.y, 50,50)
+
+  } else {
+    ctx.fillRect(this.x, this.y, this.width, this.height)
+  }
   //Set jumping state to false
   this.jumping = false
   //component update function
-  this.update = function() {
+  this.update = function(image) {
     //Get our context
     ctx = gameArea.context
-    //Set fill style to color
-    ctx.fillStyle = color
-    //Do the filling at X,Y of XWidth of XHeight
-    ctx.fillRect(this.x, this.y, this.width, this.height)
+    if (image) {
+      img = new Image();
+      img.src = image;
+      ctx.drawImage(img, this.x, this.y, 50,50)
+    } else {
+      //Set fill style to color
+      ctx.fillStyle = color
+      //Do the filling at X,Y of XWidth of XHeight
+      ctx.fillRect(this.x, this.y, this.width, this.height)
+    }
   }
   //Function to move the component by X and Y
   this.move = function(x, y) {
@@ -306,7 +319,7 @@ function updateGame() {
   //Update our game framerate variable
   gameFPS.update("FPS: " + gameArea.getFramerate())
   //Update component position
-  playerOne.update()
+  playerOne.update("assets/images/bird.png")
 }
 
 //Start the game function
@@ -315,7 +328,7 @@ function startGame() {
   gameArea.start()
   //Setup player 1
   console.log(gameArea.canvas.height / 2, gameArea.canvas.width / 2)
-  playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.width / 2 - 25, gameArea.canvas.height / 2 - 25)
+  playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.width / 2 - 25, gameArea.canvas.height / 2 - 25, "assets/images/bird.png")
   //Setup wall a
   gameArea.walls[0] = new component("wallA", 20, 100, "red", gameArea.canvas.width, 0)
   //Setup wall b
@@ -338,7 +351,7 @@ document.addEventListener('click', function() {
     //Set game over false
     gameArea.over = false
     //Setup player 1
-    playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.width / 2 - 25, gameArea.canvas.height / 2 - 25)
+    playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.width / 2 - 25, gameArea.canvas.height / 2 - 25, "assets/images/bird.png")
     //Setup wall a
     gameArea.walls[0] = new component("wallA", 20, 100, "red", gameArea.canvas.width, 0)
     //Setup wall b
