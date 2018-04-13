@@ -34,10 +34,15 @@ var gameArea = {
   canvas: document.createElement("canvas"),
   //Current game state
   over: false,
+  //Game started state
   started: false,
+  //Default FPS
   fps: 0,
+  //Last FPS call
   lastCall: 0,
+  //Audio element to play when player jumps
   jumpSound: new Audio('assets/audio/jump.mp3'),
+  //Audio element to play when player dies
   hitWallSound: new Audio('assets/audio/hitWall.mp3'),
   //Function to start the game
   start: function() {
@@ -155,11 +160,12 @@ function component(name, width, height, color, x, y, borderRadius) {
   }
   //Function to make component jump
   this.jump = async function() {
+    //Play our jump sound at the start of the jump
     gameArea.jumpSound.play()
     //If the entity is not alive, don't move
     if (!this.alive) {
       //Quick escape, don't need to stay in the function longer
-      return false
+      return
     }
     //Set jumping state to true
     this.jumping = true
@@ -170,9 +176,10 @@ function component(name, width, height, color, x, y, borderRadius) {
       //Move it up 2 at a time
       this.y -= 4
     }
-    gameArea.jumpSound.pause();
-    gameArea.jumpSound.currentTime = 0;
-
+    //We don't need to finish, the sound is not short enough for the jump, but most of it fits
+    gameArea.jumpSound.pause()
+    //Reset the sound time to 0 to make it play on every jump
+    gameArea.jumpSound.currentTime = 0
     //Set jumping state to false after our jump
     this.jumping = false
   }
@@ -181,7 +188,7 @@ function component(name, width, height, color, x, y, borderRadius) {
     //If the entity is not alive, don't move
     if (!this.alive) {
       //Quick escape, don't need to stay in the function longer
-      return false
+      return
     }
     if (this.y >= gameArea.canvas.height - this.height) {
       //We are at the bottom
@@ -218,6 +225,11 @@ function component(name, width, height, color, x, y, borderRadius) {
 
 //Update our game area
 function updateGame() {
+  //Check if the game is over
+  if (gameArea.over) {
+    //It is over, fast exit
+    return
+  }
   if (!gameArea.started) {
     gameStart = new textElement("Click to start", gameArea.canvas.width / 2, gameArea.canvas.height / 2 - 50, 40, "white")
     return
@@ -227,12 +239,16 @@ function updateGame() {
     gameArea.over = true
     //Game over text
     gameOver = new textElement("GAMEOVER (Click to restart)", gameArea.canvas.width / 2, gameArea.canvas.height / 2 - 50, 30, "white")
+    //Fast exit
     return
   }
   //Perform overlap check, early exit
   if (playerOne.alive && (playerOne.overLap(wallA) || playerOne.overLap(wallB))) {
+    //Play our hit wall sound when the player hits a wall
     gameArea.hitWallSound.play()
+    //Player is dead, we can end
     playerOne.alive = false
+    //Fast exit
     return
   }
   //Is our player passed the walls and have we scored this round yet?
@@ -293,6 +309,7 @@ function startGame() {
   wallB = new component("wallB", 20, 100, "red", gameArea.canvas.width, gameArea.canvas.height - 100)
   //Setup score text
   playerScore = new textElement('Score: ' + playerOne.score, gameArea.canvas.width - 100, 20, 20, "red")
+  //Setup FPS text
   gameFPS = new textElement('FPS: ' + gameArea.getFramerate(), gameArea.canvas.width - 200, 20, 20, "red")
 }
 
@@ -315,9 +332,12 @@ document.addEventListener('click', function() {
     wallB = new component("wallB", 20, 100, "red", gameArea.canvas.width, gameArea.canvas.height - 100)
     //Setup score text
     playerScore = new textElement('Score: ' + playerOne.score, gameArea.canvas.width - 100, 20, 20, "red")
+    //Setup FPS text
+    gameFPS = new textElement('FPS: ' + gameArea.getFramerate(), gameArea.canvas.width - 200, 20, 20, "red")
   }
   //Jump :D
   playerOne.jump()
 })
 
+//Start our game
 startGame()
