@@ -119,12 +119,12 @@ function textElement(content, x, y, size, color) {
   }
 }
 
-//Function to create a game element
-function component(name, width, height, color, x, y, image) {
+function circle(name, radius, color, x, y) {
   //Is our player alive?
   //This does not really need to be here because it's not multiplayer, but adds
   //Capability for more than 1 'bird'
   this.alive = true
+  this.type = "circle"
   //Should our player be allowed to score?
   this.shouldScore = true
   //Our current score, I should make a player object so walls don't have score but
@@ -132,10 +132,7 @@ function component(name, width, height, color, x, y, image) {
   this.score = 0
   //Set component name
   this.name = name
-  //Set component width
-  this.width = width
-  //Set component height
-  this.height = height
+  this.radius = radius
   //Set component x coord
   this.x = x
   //Set component y coord
@@ -145,30 +142,23 @@ function component(name, width, height, color, x, y, image) {
   //Fill the context with color
   ctx.fillStyle = color
   //Do the filling at X,Y of XWidth of XHeight
-  if (image) {
-    img = new Image();
-    img.src = image;
-    ctx.drawImage(img, this.x, this.y, 50, 50)
+  ctx.beginPath()
+  ctx.arc(this.x, this.y, 100, 0, 2 * Math.PI)
+  ctx.strokeStyle = "#FFF";
 
-  } else {
-    ctx.fillRect(this.x, this.y, this.width, this.height)
-  }
+  ctx.stroke()
   //Set jumping state to false
   this.jumping = false
   //component update function
-  this.update = function (image) {
+  this.update = function (radius) {
     //Get our context
     ctx = gameArea.context
-    if (image) {
-      img = new Image();
-      img.src = image;
-      ctx.drawImage(img, this.x, this.y, 50, 50)
-    } else {
-      //Set fill style to color
-      ctx.fillStyle = color
-      //Do the filling at X,Y of XWidth of XHeight
-      ctx.fillRect(this.x, this.y, this.width, this.height)
-    }
+    ctx.beginPath()
+    ctx.arc(this.x, this.y, 100, 0, 2 * Math.PI)
+    ctx.strokeStyle = "#FFF";
+
+    ctx.stroke()
+
   }
   //Function to move the component by X and Y
   this.move = function (x, y) {
@@ -235,20 +225,91 @@ function component(name, width, height, color, x, y, image) {
   }
   //Function to check if component is overlapping another component
   this.overLap = function (other) {
-    return !(other.x > (this.x + this.width) ||
-      (other.x + other.width) < this.x ||
-      other.y > (this.y + this.height) ||
-      (other.y + other.height) < this.y)
+    if (other.type == "rectangle") {
+      let DeltaX = this.x - Math.max(other.x, Math.min(this.x, other.x + other.width));
+      let DeltaY = this.y - Math.max(other.y, Math.min(this.y, other.y + other.height));
+      return (DeltaX * DeltaX + DeltaY * DeltaY) < (this.radius * this.radius);
+    } else if (other.type == "circle") {
+      let xDist = other.x - this.x
+      let yDist = other.y - this.y
+      return Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2)) < this.radius + other.radius
+    }
+  }
+
+  this.distance = function (other) {
+    let xDist = other.x - this.x
+    let yDist = other.y - this.y
+    return Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2))
+  }
+}
+
+//Function to create a game element
+function rectangle(name, width, height, color, x, y) {
+  //Is our player alive?
+  //This does not really need to be here because it's not multiplayer, but adds
+  //Capability for more than 1 'bird'
+  this.type = "rectangle"
+  //Set component name
+  this.name = name
+  //Set component width
+  this.width = width
+  //Set component height
+  this.height = height
+  //Set component x coord
+  this.x = x
+  //Set component y coord
+  this.y = y
+  //Our game area context
+  ctx = gameArea.context
+  //Fill the context with color
+  ctx.fillStyle = color
+  //Do the filling at X,Y of XWidth of XHeight
+  ctx.fillRect(this.x, this.y, this.width, this.height)
+
+  //Set jumping state to false
+  this.jumping = false
+  //component update function
+  this.update = function (radius) {
+    //Get our context
+    ctx = gameArea.context
+    ctx.fillRect(this.x, this.y, this.width, this.height)
+  }
+  //Function to move the component by X and Y
+  this.move = function (x, y) {
+    //Set the X coordinate to move x distance
+    this.x += x
+    //Set the Y coordinate to move y distance
+    this.y += y
+  }
+  //Function to set setDimensions of the component
+  this.setDimensions = function (w, h) {
+    //Set the width to W
+    this.width = w
+    //Set the height to H
+    this.height = h
+  }
+  //Function to check if component is overlapping another component
+  this.overLap = function (other) {
+    if (other.type == "rectangle") {
+      return !(other.x > (this.x + this.width) ||
+        (other.x + other.width) < this.x ||
+        other.y > (this.y + this.height) ||
+        (other.y + other.height) < this.y)
+    } else if (other.type == "circle") {
+      let xDelta = other.x - Math.max(this.x, Math.min(other.x, this.x + this.width));
+      let yDelta = other.y - Math.max(this.y, Math.min(other.y, this.y + this.height));
+      return (xDelta * xDelta + yDelta * yDelta) < (other.radius * other.radius);
+    }
+  }
+  this.distance = function (other) {
+    let xDist = other.x - this.x
+    let yDist = other.y - this.y
+    return Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2))
   }
 }
 
 //Update our game area
 function updateGame() {
-  var devtools = /./;
-  var element = document.querySelector('#devtool-status');
-  if (element) {
-    console.log("HI")
-  }
   //Check if the game is over
   if (gameArea.over) {
     //It is over, fast exit
@@ -312,11 +373,11 @@ function updateGame() {
     //Check if our wall is halfscreen - 100px to the left, we can create another now
     if (gameArea.lastWall == undefined || gameArea.lastWall.x <= gameArea.canvas.width / 2 - 100) {
       //Create our top wall
-      gameArea.walls[gameArea.walls.length] = new component("wallA", 20, Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80, "red", gameArea.canvas.width, 0)
+      gameArea.walls[gameArea.walls.length] = new rectangle("wallA", 20, Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80, "red", gameArea.canvas.width, 0)
       //Update our last wall because the top and bottom are linked
       gameArea.lastWall = gameArea.walls[gameArea.walls.length]
       //Create our bottom wall
-      gameArea.walls[gameArea.walls.length] = new component("wallB", 20, Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80, "red",
+      gameArea.walls[gameArea.walls.length] = new rectangle("wallB", 20, Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80, "red",
         gameArea.canvas.width, Math.floor(Math.random() * (gameArea.canvas.height / 5)) + 450)
     }
   })
@@ -326,7 +387,7 @@ function updateGame() {
   //Update our game framerate variable
   gameFPS.update("FPS: " + gameArea.getFramerate())
   //Update component position
-  playerOne.update("assets/images/bird.png")
+  playerOne.update(50)
 }
 
 //Start the game function
@@ -335,11 +396,11 @@ function startGame() {
   gameArea.start()
   //Setup player 1
   console.log(gameArea.canvas.height / 2, gameArea.canvas.width / 2)
-  playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.width / 2 - 25, gameArea.canvas.height / 2 - 25, "assets/images/bird.png")
+  playerOne = new circle("player-one", 100, "white", gameArea.canvas.width / 2 - 25, gameArea.canvas.height / 2 - 25)
   //Setup wall a
-  gameArea.walls[0] = new component("wallA", 20, 100, "red", gameArea.canvas.width, 0)
+  gameArea.walls[0] = new rectangle("wallA", 20, 100, "red", gameArea.canvas.width, 0)
   //Setup wall b
-  gameArea.walls[1] = new component("wallB", 20, 100, "red", gameArea.canvas.width, gameArea.canvas.height - 100)
+  gameArea.walls[1] = new rectangle("wallB", 20, 100, "red", gameArea.canvas.width, gameArea.canvas.height - 100)
   //Setup score text
   playerScore = new textElement('Score: ' + playerOne.score, gameArea.canvas.width - 100, 20, 20, "red")
   //Setup FPS text
@@ -358,11 +419,11 @@ document.addEventListener('click', function () {
     //Set game over false
     gameArea.over = false
     //Setup player 1
-    playerOne = new component("player-one", 50, 50, "white", gameArea.canvas.width / 2 - 25, gameArea.canvas.height / 2 - 25, "assets/images/bird.png")
+    playerOne = new circle("player-one", 100, "white", gameArea.canvas.width / 2 - 25, gameArea.canvas.height / 2 - 25)
     //Setup wall a
-    gameArea.walls[0] = new component("wallA", 20, 100, "red", gameArea.canvas.width, 0)
+    gameArea.walls[0] = new rectangle("wallA", 20, 100, "red", gameArea.canvas.width, 0)
     //Setup wall b
-    gameArea.walls[1] = new component("wallB", 20, 100, "red", gameArea.canvas.width, gameArea.canvas.height - 100)
+    gameArea.walls[1] = new rectangle("wallB", 20, 100, "red", gameArea.canvas.width, gameArea.canvas.height - 100)
     //Setup score text
     playerScore = new textElement('Score: ' + playerOne.score, gameArea.canvas.width - 100, 20, 20, "red")
     //Setup FPS text
