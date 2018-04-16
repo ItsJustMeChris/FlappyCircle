@@ -143,7 +143,7 @@ function circle(name, radius, color, x, y) {
   ctx.fillStyle = color
   //Do the filling at X,Y of XWidth of XHeight
   ctx.beginPath()
-  ctx.arc(this.x, this.y, 100, 0, 2 * Math.PI)
+  ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI)
   ctx.strokeStyle = "#FFF";
 
   ctx.stroke()
@@ -154,7 +154,7 @@ function circle(name, radius, color, x, y) {
     //Get our context
     ctx = gameArea.context
     ctx.beginPath()
-    ctx.arc(this.x, this.y, 100, 0, 2 * Math.PI)
+    ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI)
     ctx.strokeStyle = "#FFF";
 
     ctx.stroke()
@@ -174,6 +174,13 @@ function circle(name, radius, color, x, y) {
     //If the entity is not alive, don't move
     if (!this.alive) {
       //Quick escape, don't need to stay in the function longer
+      return
+    }
+    if (this.y - this.radius < 0) {
+      //We are at the bottom
+      this.y = 0 + this.radius
+      //Quick escape to avoid falling and 'glitching' of the bird
+      console.log("!")
       return
     }
     //Set jumping state to true
@@ -199,9 +206,9 @@ function circle(name, radius, color, x, y) {
       //Quick escape, don't need to stay in the function longer
       return
     }
-    if (this.y >= gameArea.canvas.height - this.height) {
+    if (this.y >= gameArea.canvas.height - this.radius) {
       //We are at the bottom
-      this.y = gameArea.canvas.height - this.height
+      this.y = gameArea.canvas.height - this.radius
       //Quick escape to avoid falling and 'glitching' of the bird
       return
     }
@@ -373,12 +380,18 @@ function updateGame() {
     //Check if our wall is halfscreen - 100px to the left, we can create another now
     if (gameArea.lastWall == undefined || gameArea.lastWall.x <= gameArea.canvas.width / 2 - 100) {
       //Create our top wall
-      gameArea.walls[gameArea.walls.length] = new rectangle("wallA", 20, Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80, "red", gameArea.canvas.width, 0)
+      let randomA = Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80
+      let randomB = Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80  
+      
+      if (randomA + randomB >= gameArea.canvas.height - 250) {
+        return
+      }
+      gameArea.walls[gameArea.walls.length] = new rectangle("wallA", 20, randomA, "red", gameArea.canvas.width, 0)
       //Update our last wall because the top and bottom are linked
       gameArea.lastWall = gameArea.walls[gameArea.walls.length]
       //Create our bottom wall
-      gameArea.walls[gameArea.walls.length] = new rectangle("wallB", 20, Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80, "red",
-        gameArea.canvas.width, Math.floor(Math.random() * (gameArea.canvas.height / 5)) + 450)
+      gameArea.walls[gameArea.walls.length] = new rectangle("wallB", 20, randomB, "red",
+        gameArea.canvas.width, gameArea.canvas.height - randomB)
     }
   })
   //Check if the walls are
@@ -396,7 +409,7 @@ function startGame() {
   gameArea.start()
   //Setup player 1
   console.log(gameArea.canvas.height / 2, gameArea.canvas.width / 2)
-  playerOne = new circle("player-one", 100, "white", gameArea.canvas.width / 2 - 25, gameArea.canvas.height / 2 - 25)
+  playerOne = new circle("player-one", 50, "white", gameArea.canvas.width / 2 - 25, gameArea.canvas.height / 2 - 25)
   //Setup wall a
   gameArea.walls[0] = new rectangle("wallA", 20, 100, "red", gameArea.canvas.width, 0)
   //Setup wall b
@@ -419,7 +432,7 @@ document.addEventListener('click', function () {
     //Set game over false
     gameArea.over = false
     //Setup player 1
-    playerOne = new circle("player-one", 100, "white", gameArea.canvas.width / 2 - 25, gameArea.canvas.height / 2 - 25)
+    playerOne = new circle("player-one", 50, "white", gameArea.canvas.width / 2 - 25, gameArea.canvas.height / 2 - 25)
     //Setup wall a
     gameArea.walls[0] = new rectangle("wallA", 20, 100, "red", gameArea.canvas.width, 0)
     //Setup wall b
