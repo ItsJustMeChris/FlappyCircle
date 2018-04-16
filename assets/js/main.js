@@ -382,7 +382,7 @@ function updateGame() {
       //Create our top wall
       let randomA = Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80
       let randomB = Math.floor(Math.random() * (gameArea.canvas.height / 2 - 80)) + 80  
-      
+
       if (randomA + randomB >= gameArea.canvas.height - 250) {
         return
       }
@@ -409,7 +409,7 @@ function startGame() {
   gameArea.start()
   //Setup player 1
   console.log(gameArea.canvas.height / 2, gameArea.canvas.width / 2)
-  playerOne = new circle("player-one", 50, "white", gameArea.canvas.width / 2 - 25, gameArea.canvas.height / 2 - 25)
+  playerOne = new circle("player-one", 50, "white", gameArea.canvas.width / 2, gameArea.canvas.height / 2)
   //Setup wall a
   gameArea.walls[0] = new rectangle("wallA", 20, 100, "red", gameArea.canvas.width, 0)
   //Setup wall b
@@ -432,7 +432,7 @@ document.addEventListener('click', function () {
     //Set game over false
     gameArea.over = false
     //Setup player 1
-    playerOne = new circle("player-one", 50, "white", gameArea.canvas.width / 2 - 25, gameArea.canvas.height / 2 - 25)
+    playerOne = new circle("player-one", 50, "white", gameArea.canvas.width / 2, gameArea.canvas.height / 2)
     //Setup wall a
     gameArea.walls[0] = new rectangle("wallA", 20, 100, "red", gameArea.canvas.width, 0)
     //Setup wall b
