@@ -1,17 +1,16 @@
 class text {
-    constructor(content, x, y, size, color) {
-        this.ctx = context;
-        this.ctx.font = size + "px Arial";
-        this.ctx.fillStyle = color;
-        this.ctx.textAlign = "center";
-        this.ctx.fillText(content, x, y);
+    constructor(context, content, x, y, size, color) {
+        this.context = context;
+        this.context.font = size + "px Arial";
+        this.context.fillStyle = color;
+        this.context.textAlign = "center";
+        this.context.fillText(content, x, y);
     }
 
-    update() {
-        this.ctx = gameArea.context;
-        this.ctx.font = size + "px Arial";
-        this.ctx.fillStyle = color;
-        this.ctx.textAlign = "center"
-        this.ctx.fillText(content, x, y);
+    update(content, x, y, size, color) {
+        this.context.font = size + "px Arial";
+        this.context.fillStyle = color;
+        this.context.textAlign = "center"
+        this.context.fillText(content, x, y);
     }
 }

@@ -9,6 +9,8 @@ class circle {
         this.context.beginPath();
         this.alive = true;
         this.jumping = false;
+        this.shouldScore = false;
+        this.score = 0;
         this.context.arc(x, y, radius, 0, 2 * Math.PI);
         this.context.strokeStyle = "#FFF";
         this.context.stroke();
@@ -31,6 +33,9 @@ class circle {
         }
         this.jumping = true;
         for (var i = 0; i < 30; i++) {
+            if (!this.alive) {
+                return;
+            }
             await sleep(1);
             this.y -= 4;
             this.update();

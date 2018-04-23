@@ -1,18 +1,18 @@
 class gameArea {
-    constructor() {
+    constructor(w,h) {
         this.canvas = document.createElement('canvas');
         this.status = "notstarted";
         this.fps = 0;
         this.lastFPS = 0;
         this.components = [];
-        this.canvas.width = 500;
-        this.canvas.height = 500;
+        this.canvas.width = w;
+        this.canvas.height = h;
         this.canvas.style.background = "#333";
         this.context = this.canvas.getContext('2d');
     }
 
     create() {
-        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        document.body.insertBefore(this.canvas, document.body.childNodes[2]);
     }
 
     loop(passed) {
