@@ -6,8 +6,8 @@ var fps = new text(game.getContext(),"FPS: 0", 250, 30, 30, "#fff");
 
 game.components.push(player);
 
-game.components.push(new rectangle(game.getContext(), 500, 0, 30, 250, "#fff"));
-game.components.push(new rectangle(game.getContext(), 500, 450, 30, 250, "#fff"));
+game.components.push(new rectangle(game.getContext(), 500, 0, 30, 250, "#fff", true));
+game.components.push(new rectangle(game.getContext(), 500, 450, 30, 250, "#fff", false));
 
 function handleWalls() {
     game.components.forEach(a => {
@@ -27,8 +27,8 @@ function handleWalls() {
                 game.components.splice(game.components.indexOf(a), 3);
                 let randomA = Math.floor(Math.random() * (game.canvas.height / 2 - 80)) + 40;
                 let randomB = Math.floor(Math.random() * (game.canvas.height / 2 - 80)) + 80;             
-                game.components.push(new rectangle(game.getContext(), game.canvas.width, 0, 20, randomA, "#fff"));
-                game.components.push(new rectangle(game.getContext(), game.canvas.width, game.canvas.height - randomB, 20, randomB, "#fff"));                        
+                game.components.push(new rectangle(game.getContext(), game.canvas.width, 0, 20, randomA, "#fff", true));
+                game.components.push(new rectangle(game.getContext(), game.canvas.width, game.canvas.height - randomB, 20, randomB, "#fff", false));                        
             }
         }
     });
