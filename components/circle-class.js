@@ -14,13 +14,24 @@ class circle {
         this.context.arc(x, y, radius, 0, 2 * Math.PI);
         this.context.strokeStyle = "#FFF";
         this.context.stroke();
+		this.bird = new Image();
+		this.bird.src = 'b.png';
+		console.log(this.bird);
+		this.bird.onload = function() {
+		}
+
     }
 
     update(context) {
+		if (context != undefined) {
         this.context.beginPath();
         this.context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
         this.context.strokeStyle = "#FFF";;
         this.context.stroke();
+		this.bird = new Image();
+		this.bird.src = 'b.png';
+		context.drawImage(this.bird, this.x-25, this.y-25, 50, 50);
+		}
     }
 
     async jump() {
