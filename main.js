@@ -1,6 +1,6 @@
 var game = new gameArea(500,500);
 game.create();
-var player = new circle(game.getContext(), 50, 50, "#fff", 30);
+var player = new circle(game.getContext(), 50, 50, "#fff", 20);
 var score = new text(game.getContext(),"Score: 0", 400, 30, 30, "#fff");
 var fps = new text(game.getContext(),"FPS: 0", 250, 30, 30, "#fff");
 
@@ -43,7 +43,7 @@ setInterval(function () {
     score.update("Score: " + player.score, 400, 30, 30, "#fff");
     fps.update("FPS: " + game.getFramerate(), 250, 30, 30, "#fff");
     player.fall();
-    player.update();
+    player.update(game.getContext());
 }, 15)
 
 document.addEventListener('click', function () {
