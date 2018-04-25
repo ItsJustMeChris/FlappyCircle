@@ -52,6 +52,14 @@ document.addEventListener('click', function () {
     if (game.status == 'preped') {
         game.status = 'started';
     }
+    if (game.status == 'over') {
+        game.status = 'preped';
+        game.components = [];
+        game.components.push(new rectangle(game.getContext(), 500, 0, 30, 250, "#fff", true));
+        game.components.push(new rectangle(game.getContext(), 500, 450, 30, 250, "#fff", false));
+        player.alive = true;
+        player.score = 0;
+    }
     if (player.alive) {
         player.jump();
     }
