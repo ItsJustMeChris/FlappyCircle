@@ -12,7 +12,7 @@ class gameArea {
     }
 
     create() {
-        document.body.insertBefore(this.canvas, document.body.childNodes[2]);
+        document.body.insertBefore(this.canvas, document.body.childNodes[4]);
     }
 
     loop(passed) {
