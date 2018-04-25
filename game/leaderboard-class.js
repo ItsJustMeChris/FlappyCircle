@@ -4,6 +4,9 @@ class leaderboard {
         this.leaderBoardDom = document.getElementById('leaderboard');
         this.highScores.sort(function(a,b) { return b['score'] - a['score'] } );
         this.highScores.forEach(element => {
+            if (element['score'] == 0) {
+                return;
+            }
             let test = document.createElement('div');
             test.innerHTML = element['user'] + " SCORE: " + element['score'];
             this.leaderBoardDom.appendChild(test);

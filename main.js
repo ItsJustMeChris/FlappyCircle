@@ -37,7 +37,7 @@ function handleWalls() {
 }
 
 setInterval(function () {
-    if (game.status == "over") {
+    if (game.status == "over" || game.status == 'notstarted' || game.status == "notstarted") {
         return;
     }
     game.clear();
@@ -49,6 +49,9 @@ setInterval(function () {
 }, 15)
 
 document.addEventListener('click', function () {
+    if (game.status == 'preped') {
+        game.status = 'started';
+    }
     if (player.alive) {
         player.jump();
     }
@@ -59,6 +62,7 @@ var closeButton = document.getElementById('closepopup');
 
 closeButton.addEventListener('click', function() {
     closeButton.parentElement.parentElement.style.display = 'none';
+    game.status = "preped";
 })
 
 nameBox.onkeyup = function () {
