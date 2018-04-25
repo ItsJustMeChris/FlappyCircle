@@ -3,6 +3,7 @@ game.create();
 var player = new circle(game.getContext(), 50, 50, "#fff", 20);
 var score = new text(game.getContext(), "Score: 0", 400, 30, 30, "#fff");
 var fps = new text(game.getContext(), "FPS: 0", 250, 30, 30, "#fff");
+var lb = new leaderboard();
 
 game.components.push(player);
 
@@ -15,6 +16,7 @@ function handleWalls() {
             a.update();
             if (player.overLap(a)) {
                 player.alive = false;
+                lb.saveScore(player.name, player.score);
                 return game.status = "over";
             }
             a.slide();
