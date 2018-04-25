@@ -1,8 +1,8 @@
-var game = new gameArea(500,500);
+var game = new gameArea(500, 500);
 game.create();
 var player = new circle(game.getContext(), 50, 50, "#fff", 20);
-var score = new text(game.getContext(),"Score: 0", 400, 30, 30, "#fff");
-var fps = new text(game.getContext(),"FPS: 0", 250, 30, 30, "#fff");
+var score = new text(game.getContext(), "Score: 0", 400, 30, 30, "#fff");
+var fps = new text(game.getContext(), "FPS: 0", 250, 30, 30, "#fff");
 
 game.components.push(player);
 
@@ -26,9 +26,9 @@ function handleWalls() {
                 player.shouldScore = true;
                 game.components.splice(game.components.indexOf(a), 3);
                 let randomA = Math.floor(Math.random() * (game.canvas.height / 2 - 80)) + 40;
-                let randomB = Math.floor(Math.random() * (game.canvas.height / 2 - 80)) + 80;             
+                let randomB = Math.floor(Math.random() * (game.canvas.height / 2 - 80)) + 80;
                 game.components.push(new rectangle(game.getContext(), game.canvas.width, 0, 20, randomA, "#fff", true));
-                game.components.push(new rectangle(game.getContext(), game.canvas.width, game.canvas.height - randomB, 20, randomB, "#fff", false));                        
+                game.components.push(new rectangle(game.getContext(), game.canvas.width, game.canvas.height - randomB, 20, randomB, "#fff", false));
             }
         }
     });
@@ -51,3 +51,14 @@ document.addEventListener('click', function () {
         player.jump();
     }
 })
+
+var nameBox = document.getElementById('playername');
+var closeButton = document.getElementById('closepopup');
+
+closeButton.addEventListener('click', function() {
+    closeButton.parentElement.parentElement.style.display = 'none';
+})
+
+nameBox.onkeyup = function () {
+    player.setName(nameBox.value);
+}

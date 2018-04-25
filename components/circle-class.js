@@ -10,6 +10,7 @@ class circle {
         this.alive = true;
         this.jumping = false;
         this.shouldScore = false;
+        this.name = "Player One";
         this.score = 0;
         this.context.arc(x, y, radius, 0, 2 * Math.PI);
         this.context.strokeStyle = "#FFF";
@@ -20,6 +21,10 @@ class circle {
 		this.bird.onload = function() {
 		}
 
+    }
+
+    setName(name) {
+        this.name = name;
     }
 
     update(context) {

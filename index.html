@@ -23,11 +23,38 @@
             margin: 0;
             padding: 0;
         }
+
+        .popup {
+            position: absolute;
+            width: 30%;
+            height: 30%;
+            background: #444;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        div#innerpop {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        input[type="text"] {
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
-
+    <div class="popup">
+        <div id="innerpop">
+            <input type="text" id="playername" placeholder="Name" />
+            <input type="button" id="closepopup" value="Save" />
+        </div>
+    </div>
     <div class="header">
         Flappy Circle!
     </div>
