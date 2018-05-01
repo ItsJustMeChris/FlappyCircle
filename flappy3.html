@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Flappy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <style>
+        .header {
+            width: 100%;
+            top: 0;
+            height: 60px;
+            background: #444;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+            line-height: 50px;
+            color: #fff;
+            font-size: 40px;
+        }
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+			background-color: #42b0f4;
+			
+        }
+		.container{
+		position: absolute;
+		width: 80%;
+		height: 80%;
+		top: 16%;
+		bottom: 12%;
+	}
+        .popup {
+			display: block;
+            position: absolute;
+            width: 38%;
+            height: 30%;
+            background: #444;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        div#innerpop {
+			display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        input[type="text"] {
+            text-align: center;
+        }
+		div#Instructions {
+		color: #f24207;
+		width: 38%;
+		font-size: 1.5em;
+		text-align: center;
+		position: absolute;
+		top: 63%;
+		left: 30%;
+		}
+		div#information {
+		color: #f24207;
+		position: absolute;
+		font-size: 1.7em;
+		text-align: center;
+		width: 38%;
+		margin: auto;
+		top: 16%;
+		left: 30%;
+		}
+		#flompy{
+		float: right;
+		}
+		#flappy{
+		float: left;
+		}
+		#marioclouds{
+		
+		}
+		
+		
+		
+    </style>
+	
+</head>
+
+<body>
+
+<div class="header">
+        Flappy Circle!
+		</div>
+	<div class = "container">	
+	<div id = "information">
+	<p> Enter your name in the box below
+	and click save to start Flappy Circle. </p>
+	</div>
+    <div class="popup">
+	
+        <div id="innerpop">
+		
+            <input type="text" id="playername" placeholder="Name" />
+            <input type="button" id="closepopup" value="Save" />
+			
+        </div>
+    </div>
+	<div id = "Instructions">
+	<p> <strong> Directions: </strong> Just click to fly.  Fly through open walls to gain points.
+		Leader board will save top three players high scores. </p>
+			</div>
+		<div id = "marioclouds">
+		
+		</div>
+    
+		
+		
+    <div id="leaderboard">
+        
+    </div>
+	</div>
+	<div id = "flompy">
+			<image src="../flompybirdsquish.png"/ ="Cartoon Flompy Bird image">
+		</div>
+	<div id = "flappy">
+			<image src="../paintedbird.png"/ alt ="Cartoon Flappy Bird image">
+		</div>
+		
+    <script src="global/functions.js"></script>
+    <script src="game/area-class.js"></script>
+    <script src="game/leaderboard-class.js"></script>
+    <script src="components/text-class.js"></script>
+    <script src="components/rectangle-class.js"></script>
+    <script src="components/circle-class.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>
