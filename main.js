@@ -1,14 +1,14 @@
-var game = new gameArea(500, 500);
+var game = new gameArea();
 game.create();
 var player = new circle(game.getContext(), 50, 50, "#fff", 20);
-var score = new text(game.getContext(), "Score: 0", 400, 30, 30, "#fff");
-var fps = new text(game.getContext(), "FPS: 0", 250, 30, 30, "#fff");
+var score = new text(game.getContext(), "Score: 0", game.getWidth()-150, 30, 30, "#fff");
+var fps = new text(game.getContext(), "FPS: 0", game.getWidth()-260, 30, 30, "#fff");
 var lb = new leaderboard();
 
 game.components.push(player);
 
-game.components.push(new rectangle(game.getContext(), 500, 0, 30, 250, "#fff", true));
-game.components.push(new rectangle(game.getContext(), 500, 450, 30, 250, "#fff", false));
+game.components.push(new rectangle(game.getContext(), 500, 0, 80, 250, "#fff", true));
+game.components.push(new rectangle(game.getContext(), 500, 450, 80, 250, "#fff", false));
 
 function handleWalls() {
     game.components.forEach(a => {
@@ -29,8 +29,8 @@ function handleWalls() {
                 game.components.splice(game.components.indexOf(a), 3);
                 let randomA = Math.floor(Math.random() * (game.canvas.height / 2 - 80)) + 40;
                 let randomB = Math.floor(Math.random() * (game.canvas.height / 2 - 80)) + 80;
-                game.components.push(new rectangle(game.getContext(), game.canvas.width, 0, 20, randomA, "#fff", true));
-                game.components.push(new rectangle(game.getContext(), game.canvas.width, game.canvas.height - randomB, 20, randomB, "#fff", false));
+                game.components.push(new rectangle(game.getContext(), game.canvas.width, 0, 80, randomA, "#fff", true));
+                game.components.push(new rectangle(game.getContext(), game.canvas.width, game.canvas.height - randomB, 80, randomB, "#fff", false));
             }
         }
     });

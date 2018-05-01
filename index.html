@@ -22,6 +22,7 @@
         body {
             margin: 0;
             padding: 0;
+            background: rgb(70, 70, 70);
         }
 
         .popup {
@@ -35,15 +36,26 @@
             transform: translate(-50%, -50%);
         }
 
+        .hidden {
+            visibility: hidden;
+        }
+
         div#innerpop {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            color: #FFF;
         }
 
         input[type="text"] {
             text-align: center;
+        }
+
+        .headerelement {
+            width: 25%;
+            display: inline-block;
+            float: left;
         }
     </style>
 </head>
@@ -51,17 +63,31 @@
 <body>
     <div class="popup">
         <div id="innerpop">
+            <p> Enter your name in the box below and click save to start Flappy Circle. </p>
             <input type="text" id="playername" placeholder="Name" />
             <input type="button" id="closepopup" value="Save" />
+            <p>
+                <strong> Directions: </strong> Just click to fly. Fly through open walls to gain points. Leader board will save top
+                three players high scores. </p>
         </div>
     </div>
     <div class="header">
-        Flappy Circle!
+        <div class="headerelement" id="leaderboardbutton">
+            Leaderboard
+        </div>
+        <div class="headerelement">
+            Flappy Circle
+        </div>
     </div>
-    
-    <div id="leaderboard">
-        
+
+    <div class="popup hidden" id="leaderboardpop">
+        <div id="innerpop">
+            <div id="leaderboard">
+
+            </div>
+        </div>
     </div>
+
     <script src="global/functions.js"></script>
     <script src="game/area-class.js"></script>
     <script src="game/leaderboard-class.js"></script>
